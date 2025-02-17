@@ -94,7 +94,7 @@ class Game:
                             + self.reserve_time[player_color]
                             - available_time
                         ),
-                    ),jiwejdaoijweifojaew
+                    ),
                 )
                 delay = pool.apply_async(time.sleep, (sleep_time,))
             move_res = pool.apply_async(
