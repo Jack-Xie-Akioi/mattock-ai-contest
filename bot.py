@@ -18,6 +18,10 @@ class aibot:
         return choice(tuple(mineable))
 
     def move(self, board: Board, color: Space) -> tuple[Coordinate, Coordinate] | None:
+        #make a tree of all moves
+        #call heuristic to find value of boards
+        #pick move with minimax value
+        
         pieces = board.find_all(color)
         start = choice(tuple(pieces))
         ends = board.walkable_from_coord(start)
