@@ -7,6 +7,7 @@ import pygame
 from board import Space
 from game import Game
 from random_bot import RandomPlayer
+from bot import aibot
 
 
 def update():
@@ -70,7 +71,7 @@ def runPyGame(game: Game):
 
 
 def main():
-    player_a, player_b = RandomPlayer(), RandomPlayer()
+    player_a, player_b = aibot(), RandomPlayer()
     game = Game(
         player_a,
         player_b,

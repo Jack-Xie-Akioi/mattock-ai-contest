@@ -1,6 +1,8 @@
+from dataclasses import dataclass
 from random import choice
 import time
-from board import Board, Space, Coordinate
+from typing import Self
+from board import Board, Space, Coordinate 
 
 
 class aibot:
@@ -16,19 +18,30 @@ class aibot:
         mineable = board.mineable_by_player(color)
         time.sleep(self.artificial_delay)
         return choice(tuple(mineable))
+    
+    @dataclass
+    class Node[T]:
+        coordinate: set
+        value: T 
+        children: set[] | None = None
 
-    def move(self, board: Board, color: Space) -> tuple[Coordinate, Coordinate] | None:
-        #make a tree of all moves
-        #call heuristic to find value of boards
-        #pick move with minimax value
+
+        def move(self, board: Board, color: Space) -> tuple[Coordinate, Coordinate] | None:
+            #make a tree of all moves
+            #call heuristic to find value of boards
+            #pick move with minimax value
+
+            pieces = board.find_all(color)
+            moves = []
+            for piece in pieces:
+                moves.append(board.walkable_from_coord(piece))
+            if len(moves) == 0:
+                return None
+            for move in moves: 
+                heuristic()
+            
+            return
         
-        pieces = board.find_all(color)
-        start = choice(tuple(pieces))
-        ends = board.walkable_from_coord(start)
-        if len(ends) == 0:
-            return None
-        return start, choice(tuple(ends))
-    
-    def heuristic(self, board: Board, color: Space) -> int:
-        ...
-    
+        def heuristic(self, board: Board, color: Space) -> int:
+            ...
+        
