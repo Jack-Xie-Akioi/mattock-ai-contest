@@ -21,9 +21,9 @@ class aibot:
     
     @dataclass
     class Node[T]:
-        coordinate: set
+        coordinate: tuple[Coordinate, Coordinate]
         value: T 
-        children: set[] | None = None
+        children: list[] | None = None
 
 
         def move(self, board: Board, color: Space) -> tuple[Coordinate, Coordinate] | None:
@@ -39,7 +39,7 @@ class aibot:
                 return None
             for move in moves: 
                 heuristic()
-            
+            if 
             return
         
         def heuristic(self, board: Board, color: Space) -> int:
