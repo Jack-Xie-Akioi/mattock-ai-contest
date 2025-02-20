@@ -23,7 +23,10 @@ class aibot:
     class Node[T]:
         coordinate: tuple[Coordinate, Coordinate]
         value: T 
-        children: list[] | None = None
+        children: list[int] | None = None
+       
+        def __init__(self):
+            self.root = None
 
 
         def move(self, board: Board, color: Space) -> tuple[Coordinate, Coordinate] | None:
@@ -37,10 +40,8 @@ class aibot:
                 moves.append(board.walkable_from_coord(piece))
             if len(moves) == 0:
                 return None
-            for move in moves: 
-                heuristic()
-            if 
-            return
+            
+            return None
         
         def heuristic(self, board: Board, color: Space) -> int:
             ...
