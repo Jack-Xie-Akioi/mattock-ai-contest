@@ -7,12 +7,9 @@ from board import Board, Space, Coordinate
 
 class aibot:
 
-    count = 0
-
     def __init__(self, artificial_delay: float = 0):
         self.name = f"rando_{aibot.count}"
         self.artificial_delay = artificial_delay
-        aibot.count += 1
 
     def mine(self, board: Board, color: Space) -> Coordinate:
         mineable = board.mineable_by_player(color)
@@ -21,9 +18,12 @@ class aibot:
     
     @dataclass
     class Node[T]:
-        coordinate: tuple[Coordinate, Coordinate]
+        board: Board
         value: T 
         children: list[] | None = None
+
+        def __init__(self):
+            self.root = None
 
 
         def move(self, board: Board, color: Space) -> tuple[Coordinate, Coordinate] | None:
@@ -31,16 +31,16 @@ class aibot:
             #call heuristic to find value of boards
             #pick move with minimax value
 
+            self.root.board = board
             pieces = board.find_all(color)
             moves = []
             for piece in pieces:
-                moves.append(board.walkable_from_coord(piece))
+                moves.append(board.mineable_by_player(piece))
+                for move in moves:
+                    ...
             if len(moves) == 0:
                 return None
-            for move in moves: 
-                heuristic()
-            if 
-            return
+            
         
         def heuristic(self, board: Board, color: Space) -> int:
             ...
