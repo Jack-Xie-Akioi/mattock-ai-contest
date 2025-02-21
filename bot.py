@@ -20,7 +20,10 @@ class aibot:
     class Node[T]:
         board: Board
         value: T 
-        children: list[] | None = None
+        children: list[int] | None = None
+       
+        def __init__(self):
+            self.root = None
 
         def __init__(self):
             self.root = None
@@ -40,7 +43,10 @@ class aibot:
                     ...
             if len(moves) == 0:
                 return None
-            
+            for move in moves: 
+                heuristic()
+            if 
+            return
         
         def heuristic(self, board: Board, color: Space) -> int:
             ...
