@@ -5,12 +5,12 @@ from typing import Optional
 from board import Board, Space, Coordinate
 from copy import copy
 
-class aibot:
+class aibot_2:
     count = 0
     def __init__(self, artificial_delay: float = 0, max_depth: int = 2):
         
-        self.name = f"aibot_{aibot.count}"
-        aibot.count += 1
+        self.name = f"aibot_{aibot_2.count}"
+        aibot_2.count += 1
         self.artificial_delay = artificial_delay
         self.max_depth = max_depth
         self.transposition_table = {}
@@ -90,8 +90,10 @@ class aibot:
 
         my_mineable = len(board.mineable_by_player(color))
         opp_mineable = len(board.mineable_by_player(opp))
+        my_walkable = len(board.walkable_by_player(color))
+        opp_walkable = len(board.walkable_by_player(opp))
     
-        return my_mineable - opp_mineable   # mineable advantage
+        return 3*(my_mineable - opp_mineable)+1*(my_walkable - opp_walkable)   # mineable advantage
 
     def possible_moves(self, board: Board, color: Space) -> list[tuple[Coordinate, Coordinate]]:
         moves = []
