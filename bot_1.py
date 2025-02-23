@@ -93,7 +93,7 @@ class aibot_1:
         my_walkable = len(board.walkable_by_player(color))
         opp_walkable = len(board.walkable_by_player(opp))
     
-        return 3*(my_mineable - opp_mineable)   # mineable advantage
+        return 3*(my_mineable - opp_mineable)+1*(my_walkable - opp_walkable)   # mineable advantage
 
     def possible_moves(self, board: Board, color: Space) -> list[tuple[Coordinate, Coordinate]]:
         moves = []
