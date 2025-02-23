@@ -59,7 +59,7 @@ class aibot:
             value = float('-inf')
             for move in moves:
                 new_board = copy(board)
-                new_board.apply_move(move, current_color)
+                new_board.move(move, current_color)
                 evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=False)
                 if evaluation > value:
                     value, best_move = evaluation, move
@@ -70,7 +70,7 @@ class aibot:
             value = float('inf')
             for move in moves:
                 new_board = copy(board)
-                new_board.apply_move(move, current_color)
+                new_board.move(move, current_color)
                 evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=True)
                 if evaluation < value:
                     value, best_move = evaluation, move

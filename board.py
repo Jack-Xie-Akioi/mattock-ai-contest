@@ -333,20 +333,7 @@ class Board:
         }
         for enemy in dead_enemies:
             self[enemy] = Space.EMPTY
-    def apply_move(self, move: tuple[Coordinate, Coordinate], color: Space):
-        """
-        Apply a move in-place to this board.
-        
-        Args:
-            move: A (start_coord, end_coord) tuple.
-            color: The color (RED or BLUE) making the move.
-        """
+    def move(self, move: tuple[Coordinate, Coordinate], color: Space):
         start, end = move
-        # Optional: Check if start has the correct color
-        if self[start] != color:
-            raise ValueError(f"Cannot move: {start} does not have a {color} piece.")
-        # Optional: Check if end is valid, etc.
-
-        # Perform the move
         self[start] = Space.EMPTY
         self[end] = color
