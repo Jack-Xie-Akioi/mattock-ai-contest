@@ -65,7 +65,7 @@ class aibot:
                     value, best_move = evaluation, move
                 alpha = max(alpha, value)
                 if beta <= alpha:
-                    break  # Beta cutoff
+                    break 
         else:
             value = float('inf')
             for move in moves:
@@ -76,7 +76,7 @@ class aibot:
                     value, best_move = evaluation, move
                 beta = min(beta, value)
                 if beta <= alpha:
-                    break  # Alpha cutoff
+                    break 
 
         self.transposition_table[state_key] = (value, best_move)
         return value, best_move
