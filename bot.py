@@ -8,11 +8,7 @@ from copy import copy
 class aibot:
     count = 0
     def __init__(self, artificial_delay: float = 0, max_depth: int = 2):
-        """
-        Args:
-            artificial_delay: how long to sleep during 'mine'
-            max_depth: the maximum depth for iterative deepening
-        """
+        
         self.name = f"aibot_{aibot.count}"
         aibot.count += 1
         self.artificial_delay = artificial_delay
@@ -20,17 +16,12 @@ class aibot:
         self.transposition_table = {}
 
     def mine(self, board: Board, color: Space) -> Coordinate:
-        """Pick a random mineable space to dig out."""
+        
         mineable = board.mineable_by_player(color)
         time.sleep(self.artificial_delay)
         return choice(tuple(mineable))
 
     def move(self, board: Board, color: Space) -> Optional[tuple[Coordinate, Coordinate]]:
-        """
-        Perform iterative deepening alpha-beta.
-        We search from depth=1 up to self.max_depth, 
-        and keep track of the best move found so far.
-        """
         best_move = None
 
         # Simple iterative deepening from 1 to max_depth
@@ -41,12 +32,8 @@ class aibot:
 
         return best_move
 
-    def minimax_ab(self, board: Board, color: Space, depth: int,
-                   alpha: float, beta: float, maximizing: bool):
-        """
-        Alpha-Beta with transposition. Storing (board_hash, color, depth, alpha, beta, maximizing)
-        as the key in the transposition table. 
-        """
+    def minimax_ab(self, board: Board, color: Space, depth: int, alpha: float, beta: float, maximizing: bool):
+        
         state_key = (hash(board), color, depth, alpha, beta, maximizing)
         if state_key in self.transposition_table:
             return self.transposition_table[state_key]
@@ -103,9 +90,8 @@ class aibot:
 
         my_mineable = len(board.mineable_by_player(color))
         opp_mineable = len(board.mineable_by_player(opp))
-        return (
-            (my_mineable - opp_mineable)   # mineable advantage
-        )
+    
+        return my_mineable - opp_mineable   # mineable advantage
 
     def possible_moves(self, board: Board, color: Space) -> list[tuple[Coordinate, Coordinate]]:
         moves = []
