@@ -71,14 +71,14 @@ def runPyGame(game: Game):
 
 
 def main():
-    player_a, player_b = aibot(), RandomPlayer()
+    player_a, player_b = aibot(),RandomPlayer()
     game = Game(
         player_a,
         player_b,
         time_per_move=3,
         reserve_time=10,
         small=True,
-        min_sleep_time=0.5,
+        min_sleep_time=0,
     )
     runPyGame(game)
 
