@@ -7,7 +7,7 @@ from copy import copy
 
 class aibot:
     count = 0
-    def __init__(self, artificial_delay: float = 0, max_depth: int = 1):
+    def __init__(self, artificial_delay: float = 0, max_depth: int = 2):
         """
         Args:
             artificial_delay: how long to sleep during 'mine'
@@ -16,7 +16,7 @@ class aibot:
         self.name = f"aibot_{aibot.count}"
         aibot.count += 1
         self.artificial_delay = artificial_delay
-        self.max_depth = max_depth  # e.g., search up to depth 4
+        self.max_depth = max_depth
         self.transposition_table = {}
 
     def mine(self, board: Board, color: Space) -> Coordinate:
@@ -32,14 +32,12 @@ class aibot:
         and keep track of the best move found so far.
         """
         best_move = None
-        best_score = float('-inf')  # track best score from the AI's perspective
 
         # Simple iterative deepening from 1 to max_depth
         for depth in range(1, self.max_depth + 1):
             score, move_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True)
             if move_found is not None:
                 best_move = move_found
-            best_score = score
 
         return best_move
 
