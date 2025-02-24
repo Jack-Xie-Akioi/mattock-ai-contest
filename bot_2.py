@@ -38,7 +38,6 @@ class aibot_2:
         if state_key in self.transposition_table:
             return self.transposition_table[state_key]
 
-        # Base case
         if depth == 0:
             val = self.heuristic(board, color)
             self.transposition_table[state_key] = (val, None)
@@ -47,7 +46,6 @@ class aibot_2:
         current_color = color if maximizing else self.opponent(color)
         moves = self.possible_moves(board, current_color)
 
-        # If no moves, treat as leaf node
         if not moves:
             val = self.heuristic(board, color)
             self.transposition_table[state_key] = (val, None)
@@ -93,7 +91,7 @@ class aibot_2:
         my_walkable = len(board.walkable_by_player(color))
         opp_walkable = len(board.walkable_by_player(opp))
     
-        return 3*(my_mineable - opp_mineable)+1*(my_walkable - opp_walkable)   # mineable advantage
+        return 3*(my_mineable - opp_mineable)+1*(my_walkable - opp_walkable) 
 
     def possible_moves(self, board: Board, color: Space) -> list[tuple[Coordinate, Coordinate]]:
         moves = []
