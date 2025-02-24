@@ -20,10 +20,10 @@ class aibot_1:
         mineable = board.mineable_by_player(color)
         return choice(tuple(mineable))
     
-    def apply_move(board, move: tuple[Coordinate, Coordinate], color: Space):
+    def apply_move(self, board: Board, move: tuple[Coordinate, Coordinate], color: Space):
         start, end = move
-        board.start = Space.EMPTY
-        board.end = color
+        board[start] = Space.EMPTY
+        board[end] = color
 
     def move(self, board: Board, color: Space) -> Optional[tuple[Coordinate, Coordinate]]:
         best_move = None

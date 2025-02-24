@@ -7,19 +7,23 @@ from copy import copy
 
 class aibot_2:
     count = 0
-    def __init__(self, artificial_delay: float = 0, max_depth: int = 2):
+    def __init__(self):
         
         self.name = f"aibot_{aibot_2.count}"
         aibot_2.count += 1
-        self.artificial_delay = artificial_delay
-        self.max_depth = max_depth
+        self.max_depth = 2 # 2 is like the max for the aibot to not run out of time
+        
         self.transposition_table = {}
 
     def mine(self, board: Board, color: Space) -> Coordinate:
         
         mineable = board.mineable_by_player(color)
-        time.sleep(self.artificial_delay)
         return choice(tuple(mineable))
+    
+    def apply_move(self, board: Board, move: tuple[Coordinate, Coordinate], color: Space):
+        start, end = move
+        board[start] = Space.EMPTY
+        board[end] = color
 
     def move(self, board: Board, color: Space) -> Optional[tuple[Coordinate, Coordinate]]:
         best_move = None
@@ -56,10 +60,12 @@ class aibot_2:
             value = float('-inf')
             for move in moves:
                 new_board = copy(board)
-                new_board.move(move, current_color)
+                self.apply_move(new_board, move, current_color)
                 evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=False) 
+                
                 if evaluation > value: #Comparing Scores from heuristic
                     value, best_move = evaluation, move
+                    
                 alpha = max(alpha, value)
                 if beta <= alpha: #Cut time
                     break 
@@ -67,10 +73,12 @@ class aibot_2:
             value = float('inf')
             for move in moves:
                 new_board = copy(board)
-                new_board.move(move, current_color)
+                self.apply_move(new_board, move, current_color)
                 evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=True)
+                
                 if evaluation < value: #Comparing Scores from heuristic
                     value, best_move = evaluation, move
+                    
                 beta = min(beta, value)
                 if beta <= alpha: #Cut time
                     break 
@@ -90,7 +98,7 @@ class aibot_2:
         my_walkable = len(board.walkable_by_player(color))
         opp_walkable = len(board.walkable_by_player(opp))
     
-        return 3*(my_mineable - opp_mineable)+1*(my_walkable - opp_walkable) #Heuristic 3:1 ratio between mineable and walkable
+        return 4*(my_mineable - opp_mineable)+1*(my_walkable - opp_walkable) #Heuristic 3:1 ratio between mineable and walkable
 
     def possible_moves(self, board: Board, color: Space) -> list[tuple[Coordinate, Coordinate]]:
         moves = []
@@ -98,3 +106,4 @@ class aibot_2:
             for destination in board.walkable_from_coord(piece):
                 moves.append((piece, destination))
         return moves
+    
