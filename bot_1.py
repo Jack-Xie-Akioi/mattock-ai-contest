@@ -34,7 +34,7 @@ class aibot_1:
 
     def minimax_ab(self, board: Board, color: Space, depth: int, alpha: float, beta: float, maximizing: bool):
         
-        state_key = (hash(board), color, depth, alpha, beta, maximizing)
+        state_key = (board, color, depth, alpha, beta, maximizing)
         if state_key in self.transposition_table:
             return self.transposition_table[state_key]
 
