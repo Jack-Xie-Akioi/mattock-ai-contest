@@ -12,12 +12,18 @@ class aibot_1:
         self.name = f"aibot_{aibot_1.count}"
         aibot_1.count += 1
         self.max_depth = 2 # 2 is like the max for the aibot to not run out of time
+        
         self.transposition_table = {}
 
     def mine(self, board: Board, color: Space) -> Coordinate:
         
         mineable = board.mineable_by_player(color)
         return choice(tuple(mineable))
+    
+    def apply_move(board, move: tuple[Coordinate, Coordinate], color: Space):
+        start, end = move
+        board.start = Space.EMPTY
+        board.end = color
 
     def move(self, board: Board, color: Space) -> Optional[tuple[Coordinate, Coordinate]]:
         best_move = None
@@ -54,7 +60,7 @@ class aibot_1:
             value = float('-inf')
             for move in moves:
                 new_board = copy(board)
-                new_board.move(move, current_color)
+                self.apply_move(new_board, move, current_color)
                 evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=False) 
                 
                 if evaluation > value: #Comparing Scores from heuristic
@@ -67,7 +73,7 @@ class aibot_1:
             value = float('inf')
             for move in moves:
                 new_board = copy(board)
-                new_board.move(move, current_color)
+                self.apply_move(new_board, move, current_color)
                 evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=True)
                 
                 if evaluation < value: #Comparing Scores from heuristic
@@ -100,8 +106,4 @@ class aibot_1:
             for destination in board.walkable_from_coord(piece):
                 moves.append((piece, destination))
         return moves
-    #This function is added to board
-    #def move(self, move: tuple[Coordinate, Coordinate], color: Space):
-        #start, end = move
-        #self[start] = Space.EMPTY
-        #self[end] = color
+    
