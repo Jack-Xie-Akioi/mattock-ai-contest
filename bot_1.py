@@ -7,18 +7,16 @@ from copy import copy
 
 class aibot_1:
     count = 0
-    def __init__(self, artificial_delay: float = 0, max_depth: int = 2):
+    def __init__(self):
         
         self.name = f"aibot_{aibot_1.count}"
         aibot_1.count += 1
-        self.artificial_delay = artificial_delay
-        self.max_depth = max_depth
+        self.max_depth = 2 # 2 is like the max for the aibot to not run out of time
         self.transposition_table = {}
 
     def mine(self, board: Board, color: Space) -> Coordinate:
         
         mineable = board.mineable_by_player(color)
-        time.sleep(self.artificial_delay)
         return choice(tuple(mineable))
 
     def move(self, board: Board, color: Space) -> Optional[tuple[Coordinate, Coordinate]]:
@@ -58,8 +56,10 @@ class aibot_1:
                 new_board = copy(board)
                 new_board.move(move, current_color)
                 evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=False) 
+                
                 if evaluation > value: #Comparing Scores from heuristic
                     value, best_move = evaluation, move
+                    
                 alpha = max(alpha, value)
                 if beta <= alpha: #Cut time
                     break 
@@ -69,8 +69,10 @@ class aibot_1:
                 new_board = copy(board)
                 new_board.move(move, current_color)
                 evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=True)
+                
                 if evaluation < value: #Comparing Scores from heuristic
                     value, best_move = evaluation, move
+                    
                 beta = min(beta, value)
                 if beta <= alpha: #Cut time
                     break 
@@ -90,7 +92,7 @@ class aibot_1:
         my_walkable = len(board.walkable_by_player(color))
         opp_walkable = len(board.walkable_by_player(opp))
     
-        return 3*(my_mineable - opp_mineable)+1*(my_walkable - opp_walkable) #Heuristic 3:1 ratio between mineable and walkable
+        return 4*(my_mineable - opp_mineable)+1*(my_walkable - opp_walkable) #Heuristic 3:1 ratio between mineable and walkable
 
     def possible_moves(self, board: Board, color: Space) -> list[tuple[Coordinate, Coordinate]]:
         moves = []
@@ -98,3 +100,8 @@ class aibot_1:
             for destination in board.walkable_from_coord(piece):
                 moves.append((piece, destination))
         return moves
+    #This function is added to board
+    #def move(self, move: tuple[Coordinate, Coordinate], color: Space):
+        #start, end = move
+        #self[start] = Space.EMPTY
+        #self[end] = color
