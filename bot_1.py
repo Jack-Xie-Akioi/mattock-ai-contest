@@ -35,7 +35,7 @@ class aibot_1:
 
         return best_move
 
-    def minimax_ab(self, board: Board, color: Space, depth: int, alpha: float, beta: float, maximizing: bool):
+    def minimax_ab(self, board: Board, color: Space, depth: int, alpha: float, beta: float, maximizing: bool, move: bool):
         
         state_key = (board, color, depth, alpha, beta, maximizing)
         if state_key in self.transposition_table:
@@ -48,11 +48,18 @@ class aibot_1:
 
         current_color = color if maximizing else self.opponent(color)
         moves = self.possible_moves(board, current_color)
+        mines = self.possible_mines(board, current_color)
 
-        if not moves:
-            val = self.heuristic(board, color)
-            self.transposition_table[state_key] = (val, None)
-            return val, None
+        if move:
+            if not moves:
+                val = self.heuristic(board, color)
+                self.transposition_table[state_key] = (val, None)
+                return val, None
+        else: 
+            if not mines:
+                val = self.heuristic(board, color)
+                self.transposition_table[state_key] = (val, None)
+                return val, None
 
         best_move = None
 
@@ -107,3 +114,9 @@ class aibot_1:
                 moves.append((piece, destination))
         return moves
     
+    def possible_mines(self, board: Board, color: Space) -> list[tuple[Coordinate, Coordinate]]:
+        mines = []
+        for piece in board.find_all(color):
+            for destination in board.mineable_by_player(piece):
+                mines.append((piece, destination))
+        return mines
