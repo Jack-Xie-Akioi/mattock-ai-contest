@@ -317,10 +317,12 @@ class Board:
             visited.add(curr)
             if self[curr] == player and curr != coord[:2]:
                 return False
-            elif self[curr] == other_player:
+            if self[curr] == other_player:
                 enemy_count += 1
-            elif curr == coord[:2] or self[curr] == Space.EMPTY:
-                frontier |= self.neighbors(curr) - visited
+                continue
+            if self[curr] == Space.WALL:
+                continue
+            frontier |= self.neighbors(curr) - visited
         return enemy_count >= 2
 
     def clear_dead(self, other_color: Space):
@@ -331,3 +333,8 @@ class Board:
         }
         for enemy in dead_enemies:
             self[enemy] = Space.EMPTY
+            
+    def move(self, move: tuple[Coordinate, Coordinate], color: Space):
+        start, end = move
+        self[start] = Space.EMPTY
+        self[end] = color
