@@ -18,11 +18,11 @@ class aibot_1:
     def mine(self, board: Board, color: Space) -> Coordinate:
         mine_found = None
         for depth in range(1, self.max_depth + 1):
-            mine_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True, move=False)
+            mine_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True, moving=False)
             if mine_found is not None:
                 best_mine = mine_found        
         
-        return best_mine
+        return best_mine 
     
     def apply_move(self, board: Board, move: tuple[Coordinate, Coordinate], color: Space):
         start, end = move
@@ -33,13 +33,13 @@ class aibot_1:
         best_move = None
         
         for depth in range(1, self.max_depth + 1):
-            move_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True, move=True) #Start from here
+            move_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True, moving=True) #Start from here
             if move_found is not None:
                 best_move = move_found
 
         return best_move
 
-    def minimax_ab(self, board: Board, color: Space, depth: int, alpha: float, beta: float, maximizing: bool, move: bool):
+    def minimax_ab(self, board: Board, color: Space, depth: int, alpha: float, beta: float, maximizing: bool, moving: bool):
         
         state_key = (board, color, depth, alpha, beta, maximizing)
         if state_key in self.transposition_table:
@@ -69,7 +69,7 @@ class aibot_1:
             for move in moves:
                 new_board = copy(board)
                 self.apply_move(new_board, move, current_color)
-                evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=False) 
+                evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=False, ) 
                 
                 if evaluation > value: #Comparing Scores from heuristic
                     value, best_move = evaluation, move
