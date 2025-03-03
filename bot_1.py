@@ -16,20 +16,24 @@ class aibot_1:
         self.transposition_table = {}
 
     def mine(self, board: Board, color: Space) -> Coordinate:
+        mine_found = None
+        for depth in range(1, self.max_depth + 1):
+            mine_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True, move=False)
+            if mine_found is not None:
+                best_mine = mine_found        
         
-        mineable = board.mineable_by_player(color)
-        return choice(tuple(mineable))
+        return best_mine
     
     def apply_move(self, board: Board, move: tuple[Coordinate, Coordinate], color: Space):
         start, end = move
         board[start] = Space.EMPTY
         board[end] = color
 
-    def move(self, board: Board, color: Space) -> Optional[tuple[Coordinate, Coordinate]]:
+    def move(self, board: Board, color: Space) -> Coordinate:
         best_move = None
         
         for depth in range(1, self.max_depth + 1):
-            score, move_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True) #Start from here
+            move_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True, move=True) #Start from here
             if move_found is not None:
                 best_move = move_found
 
@@ -47,19 +51,16 @@ class aibot_1:
             return val, None
 
         current_color = color if maximizing else self.opponent(color)
-        moves = self.possible_moves(board, current_color)
-        mines = self.possible_mines(board, current_color)
-
-        if move:
-            if not moves:
-                val = self.heuristic(board, color)
-                self.transposition_table[state_key] = (val, None)
-                return val, None
+        if move: 
+            moves = self.possible_moves(board, current_color)
         else: 
-            if not mines:
-                val = self.heuristic(board, color)
-                self.transposition_table[state_key] = (val, None)
-                return val, None
+            moves = self.possible_mines(board, current_color)
+
+        if not moves:
+            val = self.heuristic(board, color)
+            self.transposition_table[state_key] = (val, None)
+            return val, None
+
 
         best_move = None
 
@@ -97,6 +98,7 @@ class aibot_1:
         return Space.RED if color == Space.BLUE else Space.BLUE
 
     def heuristic(self, board: Board, color: Space) -> float:
+        
         
         opp = self.opponent(color)
 
