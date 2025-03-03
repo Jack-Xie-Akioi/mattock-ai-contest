@@ -73,7 +73,7 @@ def runPyGame(game: Game):
 
 def main():
     # player_a is red, player_b is blue
-    player_a, player_b = aibot_1(),RandomPlayer()
+    player_a, player_b = RandomPlayer(),aibot_1()
     game = Game(
         player_a,
         player_b,
