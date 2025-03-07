@@ -16,24 +16,26 @@ class aibot_1:
         self.transposition_table = {}
 
     def mine(self, board: Board, color: Space) -> Coordinate:
-        mine_found = None
+        best_mine = None
         for depth in range(1, self.max_depth + 1):
-            mine_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True, moving=False)
+            score, mine_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True, moving=False)
             if mine_found is not None:
-                best_mine = mine_found        
-        
-        return best_mine 
+                best_mine = mine_found
+                      
+        if best_mine:
+            return best_mine[1]
+        else:
+            raise RuntimeError("No valid move found")
     
     def apply_move(self, board: Board, move: tuple[Coordinate, Coordinate], color: Space):
         start, end = move
         board[start] = Space.EMPTY
         board[end] = color
 
-    def move(self, board: Board, color: Space) -> Coordinate:
+    def move(self, board: Board, color: Space) -> Optional[tuple[Coordinate, Coordinate]]:
         best_move = None
-        
         for depth in range(1, self.max_depth + 1):
-            move_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True, moving=True) #Start from here
+            score, move_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True, moving=True)
             if move_found is not None:
                 best_move = move_found
 
@@ -41,7 +43,7 @@ class aibot_1:
 
     def minimax_ab(self, board: Board, color: Space, depth: int, alpha: float, beta: float, maximizing: bool, moving: bool):
         
-        state_key = (board, color, depth, alpha, beta, maximizing)
+        state_key = (board, color, depth, alpha, beta, maximizing, moving)
         if state_key in self.transposition_table:
             return self.transposition_table[state_key]
 
@@ -51,7 +53,7 @@ class aibot_1:
             return val, None
 
         current_color = color if maximizing else self.opponent(color)
-        if move: 
+        if moving: 
             moves = self.possible_moves(board, current_color)
         else: 
             moves = self.possible_mines(board, current_color)
@@ -69,7 +71,10 @@ class aibot_1:
             for move in moves:
                 new_board = copy(board)
                 self.apply_move(new_board, move, current_color)
-                evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=False, ) 
+                if moving: 
+                    evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=False, moving=True) 
+                else:
+                    evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=False, moving=False) 
                 
                 if evaluation > value: #Comparing Scores from heuristic
                     value, best_move = evaluation, move
@@ -82,7 +87,10 @@ class aibot_1:
             for move in moves:
                 new_board = copy(board)
                 self.apply_move(new_board, move, current_color)
-                evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=True)
+                if moving: 
+                    evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=True, moving=True) 
+                else:
+                    evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=True, moving=False) 
                 
                 if evaluation < value: #Comparing Scores from heuristic
                     value, best_move = evaluation, move
@@ -119,6 +127,6 @@ class aibot_1:
     def possible_mines(self, board: Board, color: Space) -> list[tuple[Coordinate, Coordinate]]:
         mines = []
         for piece in board.find_all(color):
-            for destination in board.mineable_by_player(piece):
+            for destination in board.mineable_by_player(color):
                 mines.append((piece, destination))
         return mines
