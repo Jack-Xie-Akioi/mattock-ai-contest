@@ -5,20 +5,27 @@ from typing import Optional
 from board import Board, Space, Coordinate
 from copy import copy
 
-class aibot_2:
+class Smart_Bot:
     count = 0
     def __init__(self):
         
-        self.name = f"aibot_{aibot_2.count}"
-        aibot_2.count += 1
+        self.name = f"Smart_Bot"
+        Smart_Bot.count += 1
         self.max_depth = 2 # 2 is like the max for the aibot to not run out of time
         
         self.transposition_table = {}
 
     def mine(self, board: Board, color: Space) -> Coordinate:
-        
-        mineable = board.mineable_by_player(color)
-        return choice(tuple(mineable))
+        best_mine = None
+        for depth in range(1, self.max_depth + 1):
+            score, mine_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True, moving=False)
+            if mine_found is not None:
+                best_mine = mine_found
+                      
+        if best_mine:
+            return best_mine[1]
+        else:
+            raise RuntimeError
     
     def apply_move(self, board: Board, move: tuple[Coordinate, Coordinate], color: Space):
         start, end = move
@@ -27,17 +34,16 @@ class aibot_2:
 
     def move(self, board: Board, color: Space) -> Optional[tuple[Coordinate, Coordinate]]:
         best_move = None
-        
         for depth in range(1, self.max_depth + 1):
-            score, move_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True) #Start from here
+            score, move_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True, moving=True)
             if move_found is not None:
                 best_move = move_found
 
         return best_move
 
-    def minimax_ab(self, board: Board, color: Space, depth: int, alpha: float, beta: float, maximizing: bool):
+    def minimax_ab(self, board: Board, color: Space, depth: int, alpha: float, beta: float, maximizing: bool, moving: bool):
         
-        state_key = (board, color, depth, alpha, beta, maximizing)
+        state_key = (board, color, depth, alpha, beta, maximizing, moving)
         if state_key in self.transposition_table:
             return self.transposition_table[state_key]
 
@@ -47,12 +53,16 @@ class aibot_2:
             return val, None
 
         current_color = color if maximizing else self.opponent(color)
-        moves = self.possible_moves(board, current_color)
+        if moving: 
+            moves = self.possible_moves(board, current_color)
+        else: 
+            moves = self.possible_mines(board, current_color)
 
         if not moves:
             val = self.heuristic(board, color)
             self.transposition_table[state_key] = (val, None)
             return val, None
+
 
         best_move = None
 
@@ -61,7 +71,10 @@ class aibot_2:
             for move in moves:
                 new_board = copy(board)
                 self.apply_move(new_board, move, current_color)
-                evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=False) 
+                if moving: 
+                    evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=False, moving=True) 
+                else:
+                    evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=False, moving=False) 
                 
                 if evaluation > value: #Comparing Scores from heuristic
                     value, best_move = evaluation, move
@@ -74,7 +87,10 @@ class aibot_2:
             for move in moves:
                 new_board = copy(board)
                 self.apply_move(new_board, move, current_color)
-                evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=True)
+                if moving: 
+                    evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=True, moving=True) 
+                else:
+                    evaluation, _ = self.minimax_ab(new_board, color, depth - 1, alpha, beta, maximizing=True, moving=False) 
                 
                 if evaluation < value: #Comparing Scores from heuristic
                     value, best_move = evaluation, move
@@ -90,7 +106,6 @@ class aibot_2:
         return Space.RED if color == Space.BLUE else Space.BLUE
 
     def heuristic(self, board: Board, color: Space) -> float:
-        
         opp = self.opponent(color)
 
         my_mineable = len(board.mineable_by_player(color))
@@ -107,3 +122,9 @@ class aibot_2:
                 moves.append((piece, destination))
         return moves
     
+    def possible_mines(self, board: Board, color: Space) -> list[tuple[Coordinate, Coordinate]]:
+        mines = []
+        for piece in board.find_all(color):
+            for destination in board.mineable_by_player(color):
+                mines.append((piece, destination))
+        return mines
