@@ -74,7 +74,7 @@ def runPyGame(game: Game):
 def main():
     # player_a is red, player_b is blue
     
-    player_a, player_b = Dumb_Bot(),Smart_Bot()
+    player_a, player_b = Smart_Bot(),Dumb_Bot()
     ##player_a, player_b = Smart_Bot(),Dumb_Bot()
     game = Game(
         player_a,

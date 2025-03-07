@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 import time
+from random import choice
 from typing import Optional
 from board import Board, Space, Coordinate
 from copy import copy
@@ -25,8 +26,8 @@ class Smart_Bot:
         if best_mine:
             return best_mine[1]
         else:
-            raise RuntimeError
-    
+            mineable = board.mineable_by_player(color)
+            return choice(tuple(mineable))
     def apply_move(self, board: Board, move: tuple[Coordinate, Coordinate], color: Space):
         start, end = move
         board[start] = Space.EMPTY
