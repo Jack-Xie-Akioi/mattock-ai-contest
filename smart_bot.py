@@ -1,5 +1,6 @@
+#Nathan Liu, Jack Xie
+
 from dataclasses import dataclass
-from random import choice
 import time
 from typing import Optional
 from board import Board, Space, Coordinate
@@ -11,8 +12,7 @@ class Smart_Bot:
         
         self.name = f"Smart_Bot"
         Smart_Bot.count += 1
-        self.max_depth = 2 # 2 is like the max for the aibot to not run out of time
-        
+        self.max_depth = 2
         self.transposition_table = {}
 
     def mine(self, board: Board, color: Space) -> Coordinate:
@@ -35,7 +35,7 @@ class Smart_Bot:
     def move(self, board: Board, color: Space) -> Optional[tuple[Coordinate, Coordinate]]:
         best_move = None
         for depth in range(1, self.max_depth + 1):
-            score, move_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True, moving=True)
+            _,move_found = self.minimax_ab(board, color, depth, alpha=-float('inf'), beta=float('inf'), maximizing=True, moving=True)
             if move_found is not None:
                 best_move = move_found
 
@@ -113,7 +113,7 @@ class Smart_Bot:
         my_walkable = len(board.walkable_by_player(color))
         opp_walkable = len(board.walkable_by_player(opp))
     
-        return 4*(my_mineable - opp_mineable)+1*(my_walkable - opp_walkable) #Heuristic 3:1 ratio between mineable and walkable
+        return 4*(my_mineable - opp_mineable)+1*(my_walkable - opp_walkable) #Heuristic 4:1 ratio between mineable and walkable
 
     def possible_moves(self, board: Board, color: Space) -> list[tuple[Coordinate, Coordinate]]:
         moves = []
